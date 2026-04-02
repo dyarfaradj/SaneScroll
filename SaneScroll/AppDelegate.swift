@@ -158,8 +158,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         // Set the mouse acceleration
         var accelValue = Options.shared.accel
-        let accelNum = CFNumberCreate(kCFAllocatorDefault, CFNumberType.sInt32Type, &accelValue)
-        IOHIDEventSystemClientSetProperty(client, mouseAccelerationType, accelNum)
+        if let accelNum = CFNumberCreate(kCFAllocatorDefault, CFNumberType.sInt32Type, &accelValue) {
+            IOHIDEventSystemClientSetProperty(client, mouseAccelerationType, accelNum)
+        }
     }
 }
 
