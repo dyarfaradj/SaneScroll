@@ -9,7 +9,6 @@ import Cocoa
 import Foundation
 class Options {
     static let shared = Options()
-    var firstLaunch: Bool = true
     var origAccel: Int32 = 45056
     var accel: Int32 = -1
     var showMenuBarIcon: Bool = true
@@ -22,17 +21,14 @@ class Options {
     var launchAtLogin: Bool = false
 
     init() {
-        if UserDefaults.standard.object(forKey: "FirstLaunch") == nil {
-            UserDefaults.standard.set(firstLaunch, forKey: "FirstLaunch")
-        }
         if UserDefaults.standard.object(forKey: "ShowMenuBarIcon") == nil {
             UserDefaults.standard.set(showMenuBarIcon, forKey: "ShowMenuBarIcon")
         }
         if UserDefaults.standard.object(forKey: "InvertVerticalScroll") == nil {
             UserDefaults.standard.set(invertVerticalScroll, forKey: "InvertVerticalScroll")
         }
-        if UserDefaults.standard.object(forKey: "InvertHorizonalScroll") == nil {
-            UserDefaults.standard.set(invertHorizontalScroll, forKey: "InvertHorizonalScroll")
+        if UserDefaults.standard.object(forKey: "InvertHorizontalScroll") == nil {
+            UserDefaults.standard.set(invertHorizontalScroll, forKey: "InvertHorizontalScroll")
         }
         if UserDefaults.standard.object(forKey: "DisableScrollAccel") == nil {
             UserDefaults.standard.set(disableScrollAccel, forKey: "DisableScrollAccel")
@@ -56,7 +52,6 @@ class Options {
     }
     
     func loadOptions() {
-        firstLaunch = UserDefaults.standard.bool(forKey: "FirstLaunch")
         showMenuBarIcon = UserDefaults.standard.bool(forKey: "ShowMenuBarIcon")
         invertVerticalScroll = UserDefaults.standard.bool(forKey: "InvertVerticalScroll")
         invertHorizontalScroll = UserDefaults.standard.bool(forKey: "InvertHorizontalScroll")

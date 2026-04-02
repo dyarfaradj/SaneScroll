@@ -10,17 +10,13 @@ import Cocoa
 import Foundation
 import SwiftUI
 
-@NSApplicationMain
+@main
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
-    
+
     var prefsWindow: NSWindow?
     var aboutWindow: NSWindow?
 
     func applicationDidFinishLaunching(_ aNotification: Notification){
-        if Options.shared.firstLaunch {
-            UserDefaults.standard.set(false, forKey: "FirstLaunch")
-        }
-
         refresh()
         let trusted = AXIsProcessTrusted()
         if trusted {
@@ -32,16 +28,22 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
     
     func applicationWillTerminate(_ anotification: Notification) {
+        ScrollInterceptor.shared.stopIntercepting()
         // Reset the mouse acceleration when application terminates
         Options.shared.disableMouseAccel = false
         disableMouseAccel()
     }
     
+    private var accessibilityPollCount = 0
+    private let maxAccessibilityPolls = 300 // 5 minutes at 1s intervals
+
     func pollAccessibility() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+        accessibilityPollCount += 1
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
+            guard let self = self else { return }
             if AXIsProcessTrusted() {
                 ScrollInterceptor.shared.interceptScroll()
-            } else {
+            } else if self.accessibilityPollCount < self.maxAccessibilityPolls {
                 self.pollAccessibility()
             }
         }
@@ -86,7 +88,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             let window = NSWindow(contentViewController: hostingController)
             window.title = "About SaneScroll"
             window.styleMask = [.titled, .closable]
-            window.isReleasedWhenClosed = false
+            window.delegate = self
             window.setContentSize(hostingController.view.fittingSize)
             window.center()
             aboutWindow = window
@@ -107,7 +109,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             let window = NSWindow(contentViewController: hostingController)
             window.title = "SaneScroll"
             window.styleMask = [.titled, .closable]
-            window.isReleasedWhenClosed = false
             window.delegate = self
             window.setContentSize(hostingController.view.fittingSize)
             window.center()
@@ -135,26 +136,29 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     func disableMouseAccel() {
         // Based on https://github.com/apsun/NoMouseAccel
-        
-        let client: IOHIDEventSystemClient = IOHIDEventSystemClientCreateSimpleClient(kCFAllocatorDefault)
+        let client = IOHIDEventSystemClientCreateSimpleClient(kCFAllocatorDefault)
         let mouseAccelerationType: CFString = kIOHIDMouseAccelerationType as NSString
-        
-        // Get the starting acceleration value
-        var origAccel: Int32 = 0
-        let originalAccelRef: CFTypeRef = IOHIDEventSystemClientCopyProperty(client, mouseAccelerationType)!
-        CFNumberGetValue((originalAccelRef as! CFNumber), CFNumberType.sInt32Type, &origAccel)
-        // Only save it if it's not -1 (acceleration off)
-        if origAccel != -1 {
-            Options.shared.origAccel = origAccel
-            UserDefaults.standard.set(origAccel, forKey: "OriginalAccel")
+
+        // Get the starting acceleration value (guard against nil)
+        if let originalAccelRef = IOHIDEventSystemClientCopyProperty(client, mouseAccelerationType) {
+            var origAccel: Int32 = 0
+            CFNumberGetValue((originalAccelRef as! CFNumber), CFNumberType.sInt32Type, &origAccel)
+            // Only save it if it's not -1 (acceleration off)
+            if origAccel != -1 {
+                Options.shared.origAccel = origAccel
+                UserDefaults.standard.set(origAccel, forKey: "OriginalAccel")
+            }
         }
+
         if Options.shared.disableMouseAccel {
             Options.shared.accel = -1
         } else {
             Options.shared.accel = Options.shared.origAccel
         }
+
         // Set the mouse acceleration
-        let accelNum: CFNumber = CFNumberCreate(kCFAllocatorDefault, CFNumberType.sInt32Type, &Options.shared.accel)
+        var accelValue = Options.shared.accel
+        let accelNum = CFNumberCreate(kCFAllocatorDefault, CFNumberType.sInt32Type, &accelValue)
         IOHIDEventSystemClientSetProperty(client, mouseAccelerationType, accelNum)
     }
 }
