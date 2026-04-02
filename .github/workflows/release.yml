@@ -13,7 +13,7 @@ env:
 jobs:
   release:
     name: Build, Sign, Notarize & Release
-    runs-on: macos-14
+    runs-on: macos-15
     permissions:
       contents: write
     steps:
@@ -25,11 +25,10 @@ jobs:
           TAG="${GITHUB_REF_NAME}"
           echo "Setting MARKETING_VERSION to $TAG"
           sed -i '' "s/MARKETING_VERSION = .*;/MARKETING_VERSION = $TAG;/g" "$PROJECT/project.pbxproj"
-          # Verify
           grep "MARKETING_VERSION" "$PROJECT/project.pbxproj"
 
       - name: Select Xcode
-        run: sudo xcode-select -s /Applications/Xcode_15.4.app/Contents/Developer
+        run: sudo xcode-select -s /Applications/Xcode_16.2.app/Contents/Developer
 
       # ── Import signing certificate ──────────────────────────────────
       - name: Install Apple certificate
@@ -72,7 +71,7 @@ jobs:
           mkdir -p "$RUNNER_TEMP/export"
           cp -R "$RUNNER_TEMP/$APP_NAME.xcarchive/Products/Applications/$APP_NAME.app" "$RUNNER_TEMP/export/"
 
-      # ── Verify code signing before notarization ─────────────────────
+      # ── Verify code signing ─────────────────────────────────────────
       - name: Verify code signing
         run: |
           APP_PATH="$RUNNER_TEMP/export/$APP_NAME.app"
@@ -82,7 +81,7 @@ jobs:
           echo "=== Signature details ==="
           codesign --display --verbose=4 "$APP_PATH"
 
-      # ── Notarize ───────────────────────────────────────────────────
+      # ── Notarize app ───────────────────────────────────────────────
       - name: Notarize app
         env:
           APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -90,11 +89,8 @@ jobs:
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
           APP_PATH="$RUNNER_TEMP/export/$APP_NAME.app"
-
-          # Create a zip for notarization submission
           ditto -c -k --keepParent "$APP_PATH" "$RUNNER_TEMP/$APP_NAME.zip"
 
-          # Submit and wait for notarization (up to 90 minutes)
           xcrun notarytool submit "$RUNNER_TEMP/$APP_NAME.zip" \
             --apple-id "$APPLE_ID" \
             --password "$APPLE_ID_PASSWORD" \
@@ -102,7 +98,6 @@ jobs:
             --wait \
             --timeout 90m
 
-          # Staple the notarization ticket
           xcrun stapler staple "$APP_PATH"
 
       # ── Create DMG ─────────────────────────────────────────────────
@@ -112,7 +107,6 @@ jobs:
           DMG_NAME="${APP_NAME}-${TAG}.dmg"
           APP_PATH="$RUNNER_TEMP/export/$APP_NAME.app"
 
-          # Create a temporary DMG directory with an Applications symlink
           DMG_DIR="$RUNNER_TEMP/dmg"
           mkdir -p "$DMG_DIR"
           cp -R "$APP_PATH" "$DMG_DIR/"
@@ -135,7 +129,6 @@ jobs:
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         run: |
-          # Submit and wait for notarization (up to 90 minutes)
           xcrun notarytool submit "$DMG_PATH" \
             --apple-id "$APPLE_ID" \
             --password "$APPLE_ID_PASSWORD" \
@@ -153,19 +146,6 @@ jobs:
           generate_release_notes: true
           draft: false
           prerelease: false
-
-      # ── Update Homebrew tap ─────────────────────────────────────────
-      - name: Compute DMG SHA256
-        id: sha
-        run: echo "sha256=$(shasum -a 256 "$DMG_PATH" | awk '{print $1}')" >> "$GITHUB_OUTPUT"
-
-      - name: Trigger homebrew-tap update
-        uses: peter-evans/repository-dispatch@v3
-        with:
-          token: ${{ secrets.HOMEBREW_TAP_TOKEN }}
-          repository: do4k/homebrew-tap
-          event-type: update-cask
-          client-payload: '{"version": "${{ github.ref_name }}", "sha256": "${{ steps.sha.outputs.sha256 }}"}'
 
       # ── Cleanup ─────────────────────────────────────────────────────
       - name: Clean up keychain
