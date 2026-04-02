@@ -8,8 +8,13 @@ macOS forces the same "Natural" scroll direction on both your trackpad and mouse
 
 ## Why this fork?
 
-The original UnnaturalScrollWheels has been largely unmaintained since August 2022. This fork aims to:
+The original UnnaturalScrollWheels has been largely unmaintained since August 2022. The original developer no longer has a paid Apple Developer account, so builds are unsigned and trigger macOS security warnings.
 
+SaneScroll is a maintained, **signed and notarized** fork — it installs and runs without any security workarounds. No `xattr` commands, no "damaged app" warnings, no "unidentified developer" popups. Just download, drag to Applications, and go.
+
+This fork aims to:
+
+- Provide **signed and notarized** builds that work out of the box
 - Keep the app working on the latest macOS releases
 - Fix outstanding bugs and review community PRs
 - Provide regular, up-to-date releases
@@ -42,15 +47,7 @@ brew install --cask sanescroll
 2. Mount it and drag **SaneScroll.app** to your Applications folder.
 3. Open SaneScroll. You'll be prompted to grant Accessibility permissions — this is required to intercept and modify scroll events.
 
-#### Unsigned build notice
-
-SaneScroll is currently distributed without an Apple Developer signature. If macOS says the app is "damaged" or can't be verified, run:
-
-```sh
-xattr -d com.apple.quarantine /Applications/SaneScroll.app
-```
-
-This is safe — it just removes the quarantine flag that macOS applies to unsigned downloads.
+All releases are **signed with an Apple Developer ID certificate and notarized by Apple**, so macOS will not display any security warnings.
 
 ## Usage
 
@@ -60,7 +57,7 @@ If you've hidden the menu bar icon, simply open the app again (e.g. from Spotlig
 
 ## Building from source
 
-Requires Xcode 15+ and macOS 14+.
+Requires Xcode 16+ and macOS 12.3+.
 
 ```sh
 git clone https://github.com/dyarfaradj/SaneScroll.git
