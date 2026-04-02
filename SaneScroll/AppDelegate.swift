@@ -8,30 +8,19 @@
 
 import Cocoa
 import Foundation
+import SwiftUI
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
-    private let statusItem = MenuBarItem.shared
     var prefsWindow: NSWindow?
-    @IBOutlet weak var menu: NSMenu?
-    @IBOutlet weak var preferencesMenuItem: NSMenuItem?
-    @IBOutlet weak var quitMenuItem: NSMenuItem?
-    
+    var aboutWindow: NSWindow?
+
     func applicationDidFinishLaunching(_ aNotification: Notification){
         if Options.shared.firstLaunch {
             UserDefaults.standard.set(false, forKey: "FirstLaunch")
         }
-        self.statusItem.menu = self.menu
-        
-        // Add sponsor link to menu
-        let sponsorItem = NSMenuItem(title: "Sponsor this Project…", action: #selector(openSponsorPage), keyEquivalent: "")
-        sponsorItem.target = self
-        if #available(macOS 11.0, *) {
-            sponsorItem.image = NSImage(systemSymbolName: "heart.fill", accessibilityDescription: "Sponsor")
-        }
-        menu?.insertItem(sponsorItem, at: 2)
-        
+
         refresh()
         let trusted = AXIsProcessTrusted()
         if trusted {
@@ -76,11 +65,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     func refresh() {
         Options.shared.loadOptions()
-        statusItem.refreshVisibility()
+        MenuBarItem.shared.refreshVisibility()
         disableMouseAccel()
+        // Rebuild menu to reflect updated toggle states
+        MenuBarItem.shared.rebuildMenu()
     }
     
-    @IBAction func preferencesClicked(_ sender: Any) {
+    @objc func preferencesClicked(_ sender: Any) {
         if AXIsProcessTrusted() {
             showPreferences()
         } else {
@@ -88,35 +79,50 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
     }
     
-    @IBAction func showAbout(_ sender: Any) {
-        NSApp.activate(ignoringOtherApps: true)
-        NSApp.orderFrontStandardAboutPanel(sender)
-    }
-    
-    @objc func openSponsorPage() {
-        if let url = URL(string: "https://github.com/sponsors/dyarfaradj") {
-            NSWorkspace.shared.open(url)
+    @objc func showAbout(_ sender: Any) {
+        if aboutWindow == nil {
+            let aboutView = AboutView()
+            let hostingController = NSHostingController(rootView: aboutView)
+            let window = NSWindow(contentViewController: hostingController)
+            window.title = "About SaneScroll"
+            window.styleMask = [.titled, .closable]
+            window.isReleasedWhenClosed = false
+            window.setContentSize(hostingController.view.fittingSize)
+            window.center()
+            aboutWindow = window
         }
+        aboutWindow?.makeKeyAndOrderFront(self)
+        NSApp.activate(ignoringOtherApps: true)
     }
     
-    func showPreferences() // called from menu item
-    {
+    func showPreferences() {
         if prefsWindow == nil {
-            let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
-            let controllerId = NSStoryboard.SceneIdentifier("Preferences")
-            guard let controller = storyboard.instantiateController(withIdentifier: controllerId) as? NSWindowController else { return }
-            guard let window = controller.window else { return }
-            
+            let prefsView = PreferencesView(onDismiss: { [weak self] applied in
+                if applied {
+                    self?.refresh()
+                }
+                self?.prefsWindow?.close()
+            })
+            let hostingController = NSHostingController(rootView: prefsView)
+            let window = NSWindow(contentViewController: hostingController)
+            window.title = "SaneScroll"
+            window.styleMask = [.titled, .closable]
+            window.isReleasedWhenClosed = false
             window.delegate = self
+            window.setContentSize(hostingController.view.fittingSize)
             window.center()
             prefsWindow = window
         }
         prefsWindow?.makeKeyAndOrderFront(self)
         NSApp.activate(ignoringOtherApps: true)
     }
-    
+
     func windowWillClose(_ notification: Notification) {
-        prefsWindow = nil
+        if (notification.object as? NSWindow) === prefsWindow {
+            prefsWindow = nil
+        } else if (notification.object as? NSWindow) === aboutWindow {
+            aboutWindow = nil
+        }
     }
     
     
