@@ -1,6 +1,6 @@
 //
 //  PreferencesViewController.swift
-//  UnnaturalScrollWheels
+//  SaneScroll
 //
 //  Created by Theron Tjapkes on 7/25/20.
 //  Copyright © 2020 Theron Tjapkes. All rights reserved.
@@ -70,12 +70,12 @@ class PreferencesViewController: NSViewController {
     }
     
     @IBAction func openHelp(_ sender: Any) {
-        let url = URL(string: "https://github.com/ther0n/UnnaturalScrollWheels/blob/master/README.md")!
+        let url = URL(string: "https://github.com/dyarfaradj/SaneScroll/blob/main/README.md")!
         NSWorkspace.shared.open(url)
     }
     
     @IBAction func openSponsor(_ sender: Any) {
-        let url = URL(string: "https://github.com/sponsors/ther0n")!
+        let url = URL(string: "https://github.com/sponsors/dyarfaradj")!
         NSWorkspace.shared.open(url)
     }
     

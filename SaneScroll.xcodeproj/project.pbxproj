@@ -41,7 +41,7 @@
 		2C8695AB282EF51900397257 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		2C8695AC282EF5C500397257 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		2C8695B1282EF67300397257 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
-		9138880425B0CB2700A3A633 /* UnnaturalScrollWheels-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "UnnaturalScrollWheels-Bridging-Header.h"; sourceTree = "<group>"; };
+		9138880425B0CB2700A3A633 /* SaneScroll-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "SaneScroll-Bridging-Header.h"; sourceTree = "<group>"; };
 		914D7D7925C3108C00503565 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Main.storyboard; sourceTree = "<group>"; };
 		914D7D8325C32FD800503565 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		914D7D8925C342A900503565 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -49,11 +49,11 @@
 		918546AA25C0758700B2AD21 /* MenuBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItem.swift; sourceTree = "<group>"; };
 		91C7ECE324CC86B6007E2D4C /* Options.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
 		91C7ECE524CC8789007E2D4C /* ScrollInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollInterceptor.swift; sourceTree = "<group>"; };
-		91D8069A24CB37B80092C286 /* UnnaturalScrollWheels.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UnnaturalScrollWheels.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		91D8069A24CB37B80092C286 /* SaneScroll.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SaneScroll.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		91D8069D24CB37B80092C286 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		91D8069F24CB37BD0092C286 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		91D806A424CB37BD0092C286 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		91D806A524CB37BD0092C286 /* UnnaturalScrollWheels.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = UnnaturalScrollWheels.entitlements; sourceTree = "<group>"; };
+		91D806A524CB37BD0092C286 /* SaneScroll.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SaneScroll.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -97,7 +97,7 @@
 		91D8069124CB37B80092C286 = {
 			isa = PBXGroup;
 			children = (
-				91D8069C24CB37B80092C286 /* UnnaturalScrollWheels */,
+				91D8069C24CB37B80092C286 /* SaneScroll */,
 				2C86959D282EF4FC00397257 /* AutoLauncher */,
 				91D8069B24CB37B80092C286 /* Products */,
 				2C8695B0282EF67300397257 /* Frameworks */,
@@ -107,13 +107,13 @@
 		91D8069B24CB37B80092C286 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				91D8069A24CB37B80092C286 /* UnnaturalScrollWheels.app */,
+				91D8069A24CB37B80092C286 /* SaneScroll.app */,
 				2C86959C282EF4FC00397257 /* AutoLauncher.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		91D8069C24CB37B80092C286 /* UnnaturalScrollWheels */ = {
+		91D8069C24CB37B80092C286 /* SaneScroll */ = {
 			isa = PBXGroup;
 			children = (
 				914D7D8425C32FD800503565 /* Localizable.strings */,
@@ -121,14 +121,14 @@
 				91C7ECE324CC86B6007E2D4C /* Options.swift */,
 				91727DB124CCBDDA00432163 /* PreferencesViewController.swift */,
 				91C7ECE524CC8789007E2D4C /* ScrollInterceptor.swift */,
-				9138880425B0CB2700A3A633 /* UnnaturalScrollWheels-Bridging-Header.h */,
+				9138880425B0CB2700A3A633 /* SaneScroll-Bridging-Header.h */,
 				914D7D7A25C3108C00503565 /* Main.storyboard */,
 				91D8069F24CB37BD0092C286 /* Assets.xcassets */,
 				91D806A424CB37BD0092C286 /* Info.plist */,
-				91D806A524CB37BD0092C286 /* UnnaturalScrollWheels.entitlements */,
+				91D806A524CB37BD0092C286 /* SaneScroll.entitlements */,
 				918546AA25C0758700B2AD21 /* MenuBarItem.swift */,
 			);
-			path = UnnaturalScrollWheels;
+			path = SaneScroll;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -151,9 +151,9 @@
 			productReference = 2C86959C282EF4FC00397257 /* AutoLauncher.app */;
 			productType = "com.apple.product-type.application";
 		};
-		91D8069924CB37B80092C286 /* UnnaturalScrollWheels */ = {
+		91D8069924CB37B80092C286 /* SaneScroll */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 91D806A824CB37BD0092C286 /* Build configuration list for PBXNativeTarget "UnnaturalScrollWheels" */;
+			buildConfigurationList = 91D806A824CB37BD0092C286 /* Build configuration list for PBXNativeTarget "SaneScroll" */;
 			buildPhases = (
 				91D8069624CB37B80092C286 /* Sources */,
 				91D8069724CB37B80092C286 /* Frameworks */,
@@ -164,9 +164,9 @@
 			);
 			dependencies = (
 			);
-			name = UnnaturalScrollWheels;
-			productName = UnnaturalScrollWheels;
-			productReference = 91D8069A24CB37B80092C286 /* UnnaturalScrollWheels.app */;
+			name = SaneScroll;
+			productName = SaneScroll;
+			productReference = 91D8069A24CB37B80092C286 /* SaneScroll.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -188,7 +188,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 91D8069524CB37B80092C286 /* Build configuration list for PBXProject "UnnaturalScrollWheels" */;
+			buildConfigurationList = 91D8069524CB37B80092C286 /* Build configuration list for PBXProject "SaneScroll" */;
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -201,7 +201,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				91D8069924CB37B80092C286 /* UnnaturalScrollWheels */,
+				91D8069924CB37B80092C286 /* SaneScroll */,
 				2C86959B282EF4FC00397257 /* AutoLauncher */,
 			);
 		};
@@ -452,23 +452,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = UnnaturalScrollWheels/UnnaturalScrollWheels.entitlements;
+				CODE_SIGN_ENTITLEMENTS = SaneScroll/SaneScroll.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 195;
 				DEVELOPMENT_TEAM = REDACTED_TEAM_ID;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = UnnaturalScrollWheels/Info.plist;
+				INFOPLIST_FILE = SaneScroll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 1.4.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.theron.UnnaturalScrollWheels;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dyarfaradj.SaneScroll;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "UnnaturalScrollWheels/UnnaturalScrollWheels-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "SaneScroll/SaneScroll-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
 			};
@@ -479,23 +479,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = UnnaturalScrollWheels/UnnaturalScrollWheels.entitlements;
+				CODE_SIGN_ENTITLEMENTS = SaneScroll/SaneScroll.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 195;
 				DEVELOPMENT_TEAM = REDACTED_TEAM_ID;
 				ENABLE_HARDENED_RUNTIME = YES;
-				INFOPLIST_FILE = UnnaturalScrollWheels/Info.plist;
+				INFOPLIST_FILE = SaneScroll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				MARKETING_VERSION = 1.4.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.theron.UnnaturalScrollWheels;
+				PRODUCT_BUNDLE_IDENTIFIER = com.dyarfaradj.SaneScroll;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "UnnaturalScrollWheels/UnnaturalScrollWheels-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "SaneScroll/SaneScroll-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 			};
 			name = Release;
@@ -512,7 +512,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		91D8069524CB37B80092C286 /* Build configuration list for PBXProject "UnnaturalScrollWheels" */ = {
+		91D8069524CB37B80092C286 /* Build configuration list for PBXProject "SaneScroll" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				91D806A624CB37BD0092C286 /* Debug */,
@@ -521,7 +521,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		91D806A824CB37BD0092C286 /* Build configuration list for PBXNativeTarget "UnnaturalScrollWheels" */ = {
+		91D806A824CB37BD0092C286 /* Build configuration list for PBXNativeTarget "SaneScroll" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				91D806A924CB37BD0092C286 /* Debug */,

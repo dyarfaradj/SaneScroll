@@ -6,9 +6,9 @@ on:
       - "*.*.*"
 
 env:
-  APP_NAME: UnnaturalScrollWheels
-  SCHEME: UnnaturalScrollWheels
-  PROJECT: UnnaturalScrollWheels.xcodeproj
+  APP_NAME: SaneScroll
+  SCHEME: SaneScroll
+  PROJECT: SaneScroll.xcodeproj
 
 jobs:
   release:

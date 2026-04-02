@@ -1,6 +1,6 @@
 //
 //  MenuBarItem.swift
-//  UnnaturalScrollWheels
+//  SaneScroll
 //
 //  Created by Theron Tjapkes on 1/26/21.
 //  Copyright © 2021 Theron Tjapkes. All rights reserved.
