@@ -4,8 +4,8 @@ import Cocoa
 class AutoLauncherAppDelegate: NSObject, NSApplicationDelegate {
     
     struct Constants {
-        static let mainAppBundleID = "com.theron.UnnaturalScrollWheels"
-        static let mainAppName = "UnnaturalScrollWheels.app"
+        static let mainAppBundleID = "com.dyarfaradj.SaneScroll"
+        static let mainAppName = "SaneScroll.app"
     }
 
     /// Finds the main app whether the helper is running from the installed bundle
@@ -19,7 +19,7 @@ class AutoLauncherAppDelegate: NSObject, NSApplicationDelegate {
             .deletingLastPathComponent() // LoginItems
             .deletingLastPathComponent() // Library
             .deletingLastPathComponent() // Contents
-            .deletingLastPathComponent() // UnnaturalScrollWheels.app
+            .deletingLastPathComponent() // SaneScroll.app
 
         // Xcode debug location (same build products folder as the helper)
         let debugAppURL = helperURL

@@ -1,6 +1,6 @@
 //
 //  AppDelegate.swift
-//  UnnaturalScrollWheels
+//  SaneScroll
 //
 //  Created by Theron Tjapkes on 7/24/20.
 //  Copyright © 2020 Theron Tjapkes. All rights reserved.
@@ -94,7 +94,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
     
     @objc func openSponsorPage() {
-        if let url = URL(string: "https://github.com/sponsors/ther0n") {
+        if let url = URL(string: "https://github.com/sponsors/dyarfaradj") {
             NSWorkspace.shared.open(url)
         }
     }

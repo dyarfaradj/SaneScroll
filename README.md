@@ -6,6 +6,15 @@ macOS forces the same "Natural" scroll direction on both your trackpad and mouse
 
 > Forked from [UnnaturalScrollWheels](https://github.com/ther0n/UnnaturalScrollWheels) by [ther0n](https://github.com/ther0n). Full credit to the original developer for creating this essential utility.
 
+## Why this fork?
+
+The original UnnaturalScrollWheels has been largely unmaintained since August 2022. This fork aims to:
+
+- Keep the app working on the latest macOS releases
+- Fix outstanding bugs and review community PRs
+- Provide regular, up-to-date releases
+- Maintain an active open-source community around the project
+
 ## What it does
 
 SaneScroll intercepts scroll events and lets you configure scroll behavior per device type. Keep "Natural" scrolling on your trackpad while using traditional scroll direction on your mouse — or any combination you prefer.
@@ -48,15 +57,6 @@ This is safe — it just removes the quarantine flag that macOS applies to unsig
 SaneScroll lives in your menu bar. Click the icon to access preferences.
 
 If you've hidden the menu bar icon, simply open the app again (e.g. from Spotlight or Applications) to bring up the preferences window.
-
-## Why this fork?
-
-The original UnnaturalScrollWheels has been largely unmaintained since August 2022. This fork aims to:
-
-- Keep the app working on the latest macOS releases
-- Fix outstanding bugs and review community PRs
-- Provide regular, up-to-date releases
-- Maintain an active open-source community around the project
 
 ## Building from source
 

@@ -19,8 +19,8 @@ jobs:
       - name: Build (Release, Universal)
         run: |
           xcodebuild build \
-            -project UnnaturalScrollWheels.xcodeproj \
-            -scheme UnnaturalScrollWheels \
+            -project SaneScroll.xcodeproj \
+            -scheme SaneScroll \
             -configuration Release \
             -destination "generic/platform=macOS" \
             ARCHS="x86_64 arm64" \
@@ -31,7 +31,7 @@ jobs:
 
       - name: Verify universal binary
         run: |
-          APP=$(find ~/Library/Developer/Xcode/DerivedData -name "UnnaturalScrollWheels.app" -path "*/Release/*" | head -1)
+          APP=$(find ~/Library/Developer/Xcode/DerivedData -name "SaneScroll.app" -path "*/Release/*" | head -1)
           echo "App found at: $APP"
-          file "$APP/Contents/MacOS/UnnaturalScrollWheels"
-          lipo -info "$APP/Contents/MacOS/UnnaturalScrollWheels"
+          file "$APP/Contents/MacOS/SaneScroll"
+          lipo -info "$APP/Contents/MacOS/SaneScroll"
