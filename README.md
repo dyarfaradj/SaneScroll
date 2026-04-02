@@ -1,48 +1,83 @@
-# UnnaturalScrollWheels
+# SaneScroll
 
-![App Icon](/../main/UnnaturalScrollWheels/Assets.xcassets/AppIcon.appiconset/256x256.png?raw=true "App Icon")
+Separate scroll direction for your mouse and trackpad on macOS — because they shouldn't be tied together.
 
-Invert scroll direction for physical scroll wheels while maintaining "Natural" scrolling for trackpads on MacOS.
+macOS forces the same "Natural" scroll direction on both your trackpad and mouse. If you prefer natural scrolling on your trackpad but traditional scrolling on your mouse (or vice versa), you're out of luck. SaneScroll fixes this.
 
-![Screenshot](/../main/Screenshots/Screenshot.png?raw=true "Screenshot")
+> Forked from [UnnaturalScrollWheels](https://github.com/ther0n/UnnaturalScrollWheels) by [ther0n](https://github.com/ther0n). Full credit to the original developer for creating this essential utility.
 
-## Why? What does it do?
+## What it does
 
-For some reason in macOS, toggling the "Scroll direction: Natural" option in *Mouse* settings also changes it in *Trackpad* settings despite being in separate places.
+SaneScroll intercepts scroll events and lets you configure scroll behavior per device type. Keep "Natural" scrolling on your trackpad while using traditional scroll direction on your mouse — or any combination you prefer.
 
-![Mouse Settings](/../main/Screenshots/MouseSettings.png?raw=true "Mouse Settings")
-![Trackpad Settings](/../main/Screenshots/TrackpadSettings.png?raw=true "Trackpad Settings")
+### Features
 
-This application makes it so that scroll direction for physical scroll wheels is the opposite of what is shown in settings without messing with the scroll direction of the trackpad.
-
-The issue is described here:
-
-https://apple.stackexchange.com/questions/116617/how-to-separate-mouse-and-trackpad-settings
-
-Unfortunately most/all solutions no longer work reliably if at all in Catalina.
+- Invert scroll direction for physical scroll wheels independently from trackpad
+- Disable scroll acceleration for mice
+- Adjust scroll distance (line-by-line or custom multiplier)
+- Per-device configuration
+- Launch at login
+- Lives in your menu bar, out of the way
 
 ## Installation
 
-### Using Homebrew
+### Homebrew
 
+```sh
+brew install --cask sanescroll
 ```
-brew install --cask unnaturalscrollwheels
+
+### Manual
+
+1. Download the latest `.dmg` from the [Releases](../../releases) page.
+2. Mount it and drag **SaneScroll.app** to your Applications folder.
+3. Open SaneScroll. You'll be prompted to grant Accessibility permissions — this is required to intercept and modify scroll events.
+
+#### Unsigned build notice
+
+SaneScroll is currently distributed without an Apple Developer signature. If macOS says the app is "damaged" or can't be verified, run:
+
+```sh
+xattr -d com.apple.quarantine /Applications/SaneScroll.app
 ```
 
-### Manual download
-
-1. Download the latest `.dmg` from the [releases page](/../../releases), mount it, and copy the `.app` to your applications folder and open it like any other application.
-
-2. The app requires accessibility permissions to "Control your computer". This is required to intercept scroll events, invert them and modify their deltas to disable acceleration and apply your settings.
-
-![Accessibility Popup](/../main/Screenshots/AccessibilityPopup.png?raw=true "Accessibility Popup")
-
-![macOS Accessibility Popup](/../main/Screenshots/macOSAccessibilityPopup.png?raw=true "macOS Accessibility Popup")
-
-![Accessibility Settings](/../main/Screenshots/AccessibilitySettings.png?raw=true "Accessibility Settings")
-
-That's it!
+This is safe — it just removes the quarantine flag that macOS applies to unsigned downloads.
 
 ## Usage
 
-One possible confusion may be how to modify your preferences once you've hidden the app from menu bar. To show preferences and temporarily show the menu bar icon again, simply open the application again which will display the preferences window.
+SaneScroll lives in your menu bar. Click the icon to access preferences.
+
+If you've hidden the menu bar icon, simply open the app again (e.g. from Spotlight or Applications) to bring up the preferences window.
+
+## Why this fork?
+
+The original UnnaturalScrollWheels has been largely unmaintained since August 2022. This fork aims to:
+
+- Keep the app working on the latest macOS releases
+- Fix outstanding bugs and review community PRs
+- Provide regular, up-to-date releases
+- Maintain an active open-source community around the project
+
+## Building from source
+
+Requires Xcode 15+ and macOS 14+.
+
+```sh
+git clone https://github.com/dyarfaradj/SaneScroll.git
+cd SaneScroll
+open SaneScroll.xcodeproj
+```
+
+Build and run from Xcode (⌘R).
+
+## Contributing
+
+Contributions are welcome! Feel free to open issues for bugs or feature requests, or submit a pull request.
+
+## Acknowledgments
+
+This project is a fork of [UnnaturalScrollWheels](https://github.com/ther0n/UnnaturalScrollWheels) by [ther0n](https://github.com/ther0n), originally released under the GPL-3.0 license. Thank you to ther0n and all original contributors for building this essential macOS utility.
+
+## License
+
+[GPL-3.0](LICENSE)
