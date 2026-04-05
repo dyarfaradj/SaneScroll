@@ -13,14 +13,14 @@
 		2C8695B2282EF67300397257 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2C8695B1282EF67300397257 /* ServiceManagement.framework */; };
 		914D7D7825C3108C00503565 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 914D7D7A25C3108C00503565 /* Main.storyboard */; };
 		914D7D8225C32FD800503565 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 914D7D8425C32FD800503565 /* Localizable.strings */; };
-		BB00000000000001 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000002 /* PreferencesView.swift */; };
-		BB00000000000003 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000004 /* AboutView.swift */; };
-		BB00000000000005 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000006 /* SettingsViewModel.swift */; };
 		918546AB25C0758700B2AD21 /* MenuBarItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 918546AA25C0758700B2AD21 /* MenuBarItem.swift */; };
 		91C7ECE424CC86B6007E2D4C /* Options.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C7ECE324CC86B6007E2D4C /* Options.swift */; };
 		91C7ECE624CC8789007E2D4C /* ScrollInterceptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91C7ECE524CC8789007E2D4C /* ScrollInterceptor.swift */; };
 		91D8069E24CB37B80092C286 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 91D8069D24CB37B80092C286 /* AppDelegate.swift */; };
 		91D806A024CB37BD0092C286 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 91D8069F24CB37BD0092C286 /* Assets.xcassets */; };
+		BB00000000000001 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000002 /* PreferencesView.swift */; };
+		BB00000000000003 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000004 /* AboutView.swift */; };
+		BB00000000000005 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000006 /* SettingsViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -47,9 +47,6 @@
 		914D7D7925C3108C00503565 /* en */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = en; path = en.lproj/Main.storyboard; sourceTree = "<group>"; };
 		914D7D8325C32FD800503565 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		914D7D8925C342A900503565 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		BB00000000000002 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
-		BB00000000000004 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
-		BB00000000000006 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 		918546AA25C0758700B2AD21 /* MenuBarItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuBarItem.swift; sourceTree = "<group>"; };
 		91C7ECE324CC86B6007E2D4C /* Options.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Options.swift; sourceTree = "<group>"; };
 		91C7ECE524CC8789007E2D4C /* ScrollInterceptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrollInterceptor.swift; sourceTree = "<group>"; };
@@ -58,6 +55,9 @@
 		91D8069F24CB37BD0092C286 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		91D806A424CB37BD0092C286 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		91D806A524CB37BD0092C286 /* SaneScroll.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SaneScroll.entitlements; sourceTree = "<group>"; };
+		BB00000000000002 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
+		BB00000000000004 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
+		BB00000000000006 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -462,10 +462,11 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SaneScroll/SaneScroll.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 195;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 3ZJ67TRS53;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SaneScroll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -489,10 +490,11 @@
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = SaneScroll/SaneScroll.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "-";
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 195;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = 3ZJ67TRS53;
 				ENABLE_HARDENED_RUNTIME = YES;
 				INFOPLIST_FILE = SaneScroll/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
