@@ -35,14 +35,6 @@ SaneScroll intercepts scroll events and lets you configure scroll behavior per d
 
 ## 📥 Installation
 
-### Homebrew
-
-```sh
-brew install --cask sanescroll
-```
-
-### Manual
-
 1. Download the latest `.dmg` from the [Releases](../../releases) page.
 2. Mount it and drag **SaneScroll.app** to your Applications folder.
 3. Open SaneScroll. You'll be prompted to grant Accessibility permissions — this is required to intercept and modify scroll events.
