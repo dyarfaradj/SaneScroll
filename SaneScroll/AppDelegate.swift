@@ -106,7 +106,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             let aboutView = AboutView()
             let hostingController = NSHostingController(rootView: aboutView)
             let window = NSWindow(contentViewController: hostingController)
-            window.title = "About SaneScroll"
+            window.title = NSLocalizedString("AboutSaneScroll", comment: "")
             window.styleMask = [.titled, .closable]
             window.delegate = self
             window.setContentSize(hostingController.view.fittingSize)

@@ -62,33 +62,33 @@ class MenuBarItem: NSObject {
         menu.addItem(NSMenuItem.separator())
 
         // ── Quick toggles ──────────────────────────────────────
-        let headerItem = NSMenuItem(title: "Quick Toggles", action: nil, keyEquivalent: "")
+        let headerItem = NSMenuItem(title: NSLocalizedString("QuickToggles", comment: ""), action: nil, keyEquivalent: "")
         headerItem.isEnabled = false
         menu.addItem(headerItem)
 
         menu.addItem(toggleItem(
-            title: "Invert Vertical Scroll",
+            title: NSLocalizedString("InvertVerticalScroll", comment: ""),
             isOn: Options.shared.invertVerticalScroll,
             icon: "arrow.up.arrow.down",
             action: #selector(toggleVertical)
         ))
 
         menu.addItem(toggleItem(
-            title: "Invert Horizontal Scroll",
+            title: NSLocalizedString("InvertHorizontalScroll", comment: ""),
             isOn: Options.shared.invertHorizontalScroll,
             icon: "arrow.left.arrow.right",
             action: #selector(toggleHorizontal)
         ))
 
         menu.addItem(toggleItem(
-            title: "Disable Scroll Acceleration",
+            title: NSLocalizedString("DisableScrollAcceleration", comment: ""),
             isOn: Options.shared.disableScrollAccel,
             icon: "gauge.with.dots.needle.0percent",
             action: #selector(toggleScrollAccel)
         ))
 
         menu.addItem(toggleItem(
-            title: "Disable Mouse Acceleration",
+            title: NSLocalizedString("DisableMouseAcceleration", comment: ""),
             isOn: Options.shared.disableMouseAccel,
             icon: "cursorarrow.motionlines",
             action: #selector(toggleMouseAccel)
@@ -97,7 +97,7 @@ class MenuBarItem: NSObject {
         menu.addItem(NSMenuItem.separator())
 
         // ── Actions ────────────────────────────────────────────
-        let prefsItem = NSMenuItem(title: "Preferences…", action: #selector(openPreferences), keyEquivalent: ",")
+        let prefsItem = NSMenuItem(title: NSLocalizedString("Preferences", comment: ""), action: #selector(openPreferences), keyEquivalent: ",")
         prefsItem.keyEquivalentModifierMask = .command
         prefsItem.target = self
         if #available(macOS 11.0, *) {
@@ -105,14 +105,14 @@ class MenuBarItem: NSObject {
         }
         menu.addItem(prefsItem)
 
-        let aboutItem = NSMenuItem(title: "About SaneScroll", action: #selector(openAbout), keyEquivalent: "")
+        let aboutItem = NSMenuItem(title: NSLocalizedString("AboutSaneScroll", comment: ""), action: #selector(openAbout), keyEquivalent: "")
         aboutItem.target = self
         if #available(macOS 11.0, *) {
             aboutItem.image = NSImage(systemSymbolName: "info.circle", accessibilityDescription: nil)
         }
         menu.addItem(aboutItem)
 
-        let sponsorItem = NSMenuItem(title: "Sponsor", action: #selector(openSponsor), keyEquivalent: "")
+        let sponsorItem = NSMenuItem(title: NSLocalizedString("Sponsor", comment: ""), action: #selector(openSponsor), keyEquivalent: "")
         sponsorItem.target = self
         if #available(macOS 11.0, *) {
             sponsorItem.image = NSImage(systemSymbolName: "heart.fill", accessibilityDescription: nil)
@@ -121,7 +121,7 @@ class MenuBarItem: NSObject {
 
         menu.addItem(NSMenuItem.separator())
 
-        let quitItem = NSMenuItem(title: "Quit SaneScroll", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: NSLocalizedString("QuitSaneScroll", comment: ""), action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q")
         quitItem.keyEquivalentModifierMask = .command
         if #available(macOS 11.0, *) {
             quitItem.image = NSImage(systemSymbolName: "power", accessibilityDescription: nil)
@@ -134,9 +134,11 @@ class MenuBarItem: NSObject {
     // MARK: - Helpers
 
     private func statusSummary() -> String {
-        let v = Options.shared.invertVerticalScroll ? "Inverted" : "Normal"
-        let h = Options.shared.invertHorizontalScroll ? "Inverted" : "Normal"
-        return "V: \(v)  ·  H: \(h)"
+        let inverted = NSLocalizedString("StatusInverted", comment: "")
+        let normal = NSLocalizedString("StatusNormal", comment: "")
+        let v = Options.shared.invertVerticalScroll ? inverted : normal
+        let h = Options.shared.invertHorizontalScroll ? inverted : normal
+        return String(format: NSLocalizedString("StatusSummaryFormat", comment: ""), v, h)
     }
 
     private func toggleItem(title: String, isOn: Bool, icon: String, action: Selector) -> NSMenuItem {

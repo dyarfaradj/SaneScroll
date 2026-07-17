@@ -9,3 +9,17 @@
 "PermissionsMessage" = "Please allow SaneScroll to control your computer in System Settings > Privacy & Security > Accessibility. This is needed to detect and invert scrolling.";
 "OpenPreferences" = "Open System Settings";
 "Cancel" = "Cancel";
+
+/* Menu bar */
+"StatusSummaryFormat" = "V: %@  ·  H: %@";
+"StatusInverted" = "Inverted";
+"StatusNormal" = "Normal";
+"QuickToggles" = "Quick Toggles";
+"InvertVerticalScroll" = "Invert Vertical Scroll";
+"InvertHorizontalScroll" = "Invert Horizontal Scroll";
+"DisableScrollAcceleration" = "Disable Scroll Acceleration";
+"DisableMouseAcceleration" = "Disable Mouse Acceleration";
+"Preferences" = "Preferences…";
+"AboutSaneScroll" = "About SaneScroll";
+"Sponsor" = "Sponsor";
+"QuitSaneScroll" = "Quit SaneScroll";
