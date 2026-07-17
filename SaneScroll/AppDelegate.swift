@@ -8,6 +8,7 @@
 
 import Cocoa
 import Foundation
+import IOKit.hid
 import SwiftUI
 
 @main
@@ -15,9 +16,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     var prefsWindow: NSWindow?
     var aboutWindow: NSWindow?
+    private var hidDeviceMonitor: IOHIDManager?
 
     func applicationDidFinishLaunching(_ aNotification: Notification){
         refresh()
+        observeAccelerationResets()
         let trusted = AXIsProcessTrusted()
         if trusted {
             ScrollInterceptor.shared.interceptScroll()
@@ -35,20 +38,31 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
     
     private var accessibilityPollCount = 0
+    private var isPollingAccessibility = false
     private let maxAccessibilityPolls = 300 // 5 minutes at 1s intervals
 
     func pollAccessibility() {
+        guard !isPollingAccessibility else { return }
+        isPollingAccessibility = true
+        accessibilityPollCount = 0
+        pollAccessibilityTick()
+    }
+
+    private func pollAccessibilityTick() {
         accessibilityPollCount += 1
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
             if AXIsProcessTrusted() {
+                self.isPollingAccessibility = false
                 ScrollInterceptor.shared.interceptScroll()
             } else if self.accessibilityPollCount < self.maxAccessibilityPolls {
-                self.pollAccessibility()
+                self.pollAccessibilityTick()
+            } else {
+                self.isPollingAccessibility = false
             }
         }
     }
-    
+
     func accessibilityAlert() {
         let alert = NSAlert()
         alert.messageText = NSLocalizedString("PermissionsTitle", comment: "")
@@ -58,7 +72,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
             let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String : true]
             AXIsProcessTrustedWithOptions(options)
-            //NSWorkspace.shared.open(URL(string:"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
+            // Resume watching for the permission, even if an earlier poll
+            // window already expired.
+            pollAccessibility()
         }
         else {
             NSApp.terminate(self)
@@ -67,6 +83,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     func refresh() {
         Options.shared.loadOptions()
+        ScrollInterceptor.shared.refreshOptions()
         MenuBarItem.shared.refreshVisibility()
         disableMouseAccel()
         // Rebuild menu to reflect updated toggle states
@@ -75,6 +92,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     @objc func preferencesClicked(_ sender: Any) {
         if AXIsProcessTrusted() {
+            // No-op if already running; covers permission granted after the
+            // launch-time poll window expired.
+            ScrollInterceptor.shared.interceptScroll()
             showPreferences()
         } else {
             accessibilityAlert()
@@ -86,7 +106,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             let aboutView = AboutView()
             let hostingController = NSHostingController(rootView: aboutView)
             let window = NSWindow(contentViewController: hostingController)
-            window.title = "About SaneScroll"
+            window.title = NSLocalizedString("AboutSaneScroll", comment: "")
             window.styleMask = [.titled, .closable]
             window.delegate = self
             window.setContentSize(hostingController.view.fittingSize)
@@ -129,11 +149,44 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         if !flag {
-            showPreferences()
+            preferencesClicked(self)
         }
         return true
     }
     
+    // macOS resets the HID acceleration property on wake and when a mouse
+    // reconnects, so reapply our setting whenever either happens.
+    private func observeAccelerationResets() {
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self,
+            selector: #selector(reapplyMouseAccel),
+            name: NSWorkspace.didWakeNotification,
+            object: nil
+        )
+
+        let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
+        let matching: [String: Int] = [
+            kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop,
+            kIOHIDDeviceUsageKey: kHIDUsage_GD_Mouse,
+        ]
+        IOHIDManagerSetDeviceMatching(manager, matching as CFDictionary)
+        IOHIDManagerRegisterDeviceMatchingCallback(manager, { _, _, _, _ in
+            if let appDelegate = NSApp.delegate as? AppDelegate {
+                appDelegate.reapplyMouseAccel()
+            }
+        }, nil)
+        IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
+        hidDeviceMonitor = manager
+    }
+
+    @objc func reapplyMouseAccel() {
+        // Give the system a moment to finish its own device setup first
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.disableMouseAccel()
+        }
+    }
+
     func disableMouseAccel() {
         // Based on https://github.com/apsun/NoMouseAccel
         let client = IOHIDEventSystemClientCreateSimpleClient(kCFAllocatorDefault)
