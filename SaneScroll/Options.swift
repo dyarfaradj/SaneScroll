@@ -7,6 +7,13 @@
 //
 import Cocoa
 import Foundation
+
+extension Notification.Name {
+    // Posted when options are changed outside the preferences window
+    // (e.g. the menu bar quick toggles).
+    static let saneScrollOptionsChanged = Notification.Name("SaneScrollOptionsChanged")
+}
+
 class Options {
     static let shared = Options()
     var origAccel: Int32 = 45056
@@ -21,44 +28,36 @@ class Options {
     var launchAtLogin: Bool = false
 
     init() {
-        if UserDefaults.standard.object(forKey: "ShowMenuBarIcon") == nil {
-            UserDefaults.standard.set(showMenuBarIcon, forKey: "ShowMenuBarIcon")
-        }
-        if UserDefaults.standard.object(forKey: "InvertVerticalScroll") == nil {
-            UserDefaults.standard.set(invertVerticalScroll, forKey: "InvertVerticalScroll")
-        }
-        if UserDefaults.standard.object(forKey: "InvertHorizontalScroll") == nil {
-            UserDefaults.standard.set(invertHorizontalScroll, forKey: "InvertHorizontalScroll")
-        }
-        if UserDefaults.standard.object(forKey: "DisableScrollAccel") == nil {
-            UserDefaults.standard.set(disableScrollAccel, forKey: "DisableScrollAccel")
-        }
-        if UserDefaults.standard.object(forKey: "ScrollLines") == nil {
-            UserDefaults.standard.set(scrollLines, forKey: "ScrollLines")
-        }
-        if UserDefaults.standard.object(forKey: "AlternateDetectionMethod") == nil {
-            UserDefaults.standard.set(alternateDetectionMethod, forKey: "AlternateDetectionMethod")
-        }
-        if UserDefaults.standard.object(forKey: "DisableMouseAccel") == nil {
-            UserDefaults.standard.set(disableMouseAccel, forKey: "DisableMouseAccel")
-        }
-        if UserDefaults.standard.object(forKey: "OriginalAccel") == nil {
-            UserDefaults.standard.set(origAccel, forKey: "OriginalAccel")
-        }
-        if UserDefaults.standard.object(forKey: "LaunchAtLogin") == nil {
-            UserDefaults.standard.set(launchAtLogin, forKey: "LaunchAtLogin")
-        }
+        UserDefaults.standard.register(defaults: [
+            "ShowMenuBarIcon": showMenuBarIcon,
+            "InvertVerticalScroll": invertVerticalScroll,
+            "InvertHorizontalScroll": invertHorizontalScroll,
+            "DisableScrollAccel": disableScrollAccel,
+            "ScrollLines": Int(scrollLines),
+            "AlternateDetectionMethod": alternateDetectionMethod,
+            "DisableMouseAccel": disableMouseAccel,
+            "OriginalAccel": Int(origAccel),
+            "LaunchAtLogin": launchAtLogin,
+        ])
         loadOptions()
     }
-    
+
     func loadOptions() {
         showMenuBarIcon = UserDefaults.standard.bool(forKey: "ShowMenuBarIcon")
         invertVerticalScroll = UserDefaults.standard.bool(forKey: "InvertVerticalScroll")
         invertHorizontalScroll = UserDefaults.standard.bool(forKey: "InvertHorizontalScroll")
         disableScrollAccel = UserDefaults.standard.bool(forKey: "DisableScrollAccel")
-        scrollLines = Int64(UserDefaults.standard.integer(forKey: "ScrollLines"))
+        // Clamp to the range the UI allows; a zero or negative value written
+        // directly to defaults would zero out every scroll delta.
+        scrollLines = Int64(min(max(UserDefaults.standard.integer(forKey: "ScrollLines"), 1), 99))
         alternateDetectionMethod = UserDefaults.standard.bool(forKey: "AlternateDetectionMethod")
         disableMouseAccel = UserDefaults.standard.bool(forKey: "DisableMouseAccel")
         launchAtLogin = UserDefaults.standard.bool(forKey: "LaunchAtLogin")
+        // Restore the saved system acceleration so it survives a crash or
+        // force quit that happened while acceleration was disabled (-1).
+        let savedAccel = UserDefaults.standard.integer(forKey: "OriginalAccel")
+        if savedAccel > 0 {
+            origAccel = Int32(savedAccel)
+        }
     }
 }
