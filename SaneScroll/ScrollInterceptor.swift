@@ -9,29 +9,71 @@
 import Foundation
 import CoreGraphics
 
-class ScrollInterceptor {
+final class ScrollInterceptor {
 
     static let shared = ScrollInterceptor()
 
+    // Copy of the options the tap callback needs, so the callback thread
+    // never reads state the main thread may be mutating.
+    private struct OptionsSnapshot {
+        var invertVerticalScroll = true
+        var invertHorizontalScroll = false
+        var disableScrollAccel = true
+        var scrollLines: Int64 = 3
+        var alternateDetectionMethod = false
+    }
+
+    private let lock = NSLock()
+    private var snapshot = OptionsSnapshot()
+    private var started = false
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
     private var tapRunLoop: CFRunLoop?
 
+    // Call whenever options change; safe to call from any thread.
+    func refreshOptions() {
+        let options = Options.shared
+        let newSnapshot = OptionsSnapshot(
+            invertVerticalScroll: options.invertVerticalScroll,
+            invertHorizontalScroll: options.invertHorizontalScroll,
+            disableScrollAccel: options.disableScrollAccel,
+            scrollLines: options.scrollLines,
+            alternateDetectionMethod: options.alternateDetectionMethod
+        )
+        lock.lock()
+        snapshot = newSnapshot
+        lock.unlock()
+    }
+
+    private func currentSnapshot() -> OptionsSnapshot {
+        lock.lock()
+        defer { lock.unlock() }
+        return snapshot
+    }
+
+    // The system disables taps that are slow to respond (common after
+    // sleep/wake or under heavy load); re-enable ours so scrolling keeps
+    // being modified without needing an app restart.
+    fileprivate func reenableTap() {
+        lock.lock()
+        let tap = eventTap
+        lock.unlock()
+        if let tap = tap {
+            CGEvent.tapEnable(tap: tap, enable: true)
+        }
+    }
+
     // Where the magic happens
-    let scrollEventCallback: CGEventTapCallBack = { (proxy, type, event, refcon) in
-        // If the tap is disabled by the system, re-enable it
+    private static let scrollEventCallback: CGEventTapCallBack = { (_, type, event, _) in
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
-            if let refcon = refcon {
-                let tap = Unmanaged<AnyObject>.fromOpaque(refcon).takeUnretainedValue()
-                if let machPort = tap as! CFMachPort? {
-                    CGEvent.tapEnable(tap: machPort, enable: true)
-                }
-            }
+            ScrollInterceptor.shared.reenableTap()
             return Unmanaged.passUnretained(event)
         }
 
+        let options = ScrollInterceptor.shared.currentSnapshot()
+
         var isWheel: Bool = true
-        if !Options.shared.alternateDetectionMethod {
+        if !options.alternateDetectionMethod {
             // scrollWheelEventIsContinuous will be 0 for mice and 1 for trackpads
             if event.getIntegerValueField(.scrollWheelEventIsContinuous) != 0 {
                 isWheel = false
@@ -46,17 +88,17 @@ class ScrollInterceptor {
         }
 
         if isWheel {
-            if Options.shared.invertVerticalScroll {
+            if options.invertVerticalScroll {
                 event.setIntegerValueField(
                     .scrollWheelEventDeltaAxis1, value: -event.getIntegerValueField(.scrollWheelEventDeltaAxis1))
             }
-            if Options.shared.invertHorizontalScroll {
+            if options.invertHorizontalScroll {
                 event.setIntegerValueField(
                     .scrollWheelEventDeltaAxis2, value: -event.getIntegerValueField(.scrollWheelEventDeltaAxis2))
             }
-            if Options.shared.disableScrollAccel {
+            if options.disableScrollAccel {
                 event.setIntegerValueField(.scrollWheelEventDeltaAxis1,
-                    value: event.getIntegerValueField(.scrollWheelEventDeltaAxis1).signum() * Options.shared.scrollLines)
+                    value: event.getIntegerValueField(.scrollWheelEventDeltaAxis1).signum() * options.scrollLines)
             }
         }
         return Unmanaged.passUnretained(event)
@@ -65,7 +107,15 @@ class ScrollInterceptor {
     // Intercept scroll wheel events
     func interceptScroll() {
         // Don't create multiple taps
-        guard eventTap == nil else { return }
+        lock.lock()
+        if started {
+            lock.unlock()
+            return
+        }
+        started = true
+        lock.unlock()
+
+        refreshOptions()
 
         DispatchQueue.global(qos: .userInteractive).async { [weak self] in
             guard let self = self else { return }
@@ -75,11 +125,16 @@ class ScrollInterceptor {
                 place: .tailAppendEventTap,
                 options: .defaultTap,
                 eventsOfInterest: CGEventMask(1 << CGEventType.scrollWheel.rawValue),
-                callback: self.scrollEventCallback,
+                callback: ScrollInterceptor.scrollEventCallback,
                 userInfo: nil
             )
 
-            guard let tap = tap else { return }
+            guard let tap = tap else {
+                self.lock.lock()
+                self.started = false
+                self.lock.unlock()
+                return
+            }
 
             let source = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, tap, 0)
             let currentRunLoop = CFRunLoopGetCurrent()
@@ -87,9 +142,11 @@ class ScrollInterceptor {
             CFRunLoopAddSource(currentRunLoop, source, CFRunLoopMode.commonModes)
             CGEvent.tapEnable(tap: tap, enable: true)
 
+            self.lock.lock()
             self.eventTap = tap
             self.runLoopSource = source
             self.tapRunLoop = currentRunLoop
+            self.lock.unlock()
 
             CFRunLoopRun()
         }
@@ -97,20 +154,27 @@ class ScrollInterceptor {
 
     // Clean up event tap and stop the run loop
     func stopIntercepting() {
-        if let tap = eventTap {
+        lock.lock()
+        let tap = eventTap
+        let source = runLoopSource
+        let runLoop = tapRunLoop
+        eventTap = nil
+        runLoopSource = nil
+        tapRunLoop = nil
+        started = false
+        lock.unlock()
+
+        if let tap = tap {
             CGEvent.tapEnable(tap: tap, enable: false)
         }
-        if let runLoop = tapRunLoop {
-            if let source = runLoopSource {
+        if let runLoop = runLoop {
+            if let source = source {
                 CFRunLoopRemoveSource(runLoop, source, CFRunLoopMode.commonModes)
             }
             CFRunLoopStop(runLoop)
         }
-        if let tap = eventTap {
+        if let tap = tap {
             CFMachPortInvalidate(tap)
         }
-        eventTap = nil
-        runLoopSource = nil
-        tapRunLoop = nil
     }
 }

@@ -155,6 +155,7 @@ class MenuBarItem: NSObject {
         UserDefaults.standard.set(opts.invertHorizontalScroll, forKey: "InvertHorizontalScroll")
         UserDefaults.standard.set(opts.disableScrollAccel, forKey: "DisableScrollAccel")
         UserDefaults.standard.set(opts.disableMouseAccel, forKey: "DisableMouseAccel")
+        ScrollInterceptor.shared.refreshOptions()
         statusItem?.menu = buildMenu()
     }
 

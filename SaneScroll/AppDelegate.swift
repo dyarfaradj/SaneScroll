@@ -67,6 +67,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     func refresh() {
         Options.shared.loadOptions()
+        ScrollInterceptor.shared.refreshOptions()
         MenuBarItem.shared.refreshVisibility()
         disableMouseAccel()
         // Rebuild menu to reflect updated toggle states
