@@ -38,20 +38,31 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
     
     private var accessibilityPollCount = 0
+    private var isPollingAccessibility = false
     private let maxAccessibilityPolls = 300 // 5 minutes at 1s intervals
 
     func pollAccessibility() {
+        guard !isPollingAccessibility else { return }
+        isPollingAccessibility = true
+        accessibilityPollCount = 0
+        pollAccessibilityTick()
+    }
+
+    private func pollAccessibilityTick() {
         accessibilityPollCount += 1
         DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { [weak self] in
             guard let self = self else { return }
             if AXIsProcessTrusted() {
+                self.isPollingAccessibility = false
                 ScrollInterceptor.shared.interceptScroll()
             } else if self.accessibilityPollCount < self.maxAccessibilityPolls {
-                self.pollAccessibility()
+                self.pollAccessibilityTick()
+            } else {
+                self.isPollingAccessibility = false
             }
         }
     }
-    
+
     func accessibilityAlert() {
         let alert = NSAlert()
         alert.messageText = NSLocalizedString("PermissionsTitle", comment: "")
@@ -61,7 +72,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         if alert.runModal() == NSApplication.ModalResponse.alertFirstButtonReturn {
             let options: NSDictionary = [kAXTrustedCheckOptionPrompt.takeUnretainedValue() as String : true]
             AXIsProcessTrustedWithOptions(options)
-            //NSWorkspace.shared.open(URL(string:"x-apple.systempreferences:com.apple.preference.security?Privacy_Accessibility")!)
+            // Resume watching for the permission, even if an earlier poll
+            // window already expired.
+            pollAccessibility()
         }
         else {
             NSApp.terminate(self)
@@ -79,6 +92,9 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     @objc func preferencesClicked(_ sender: Any) {
         if AXIsProcessTrusted() {
+            // No-op if already running; covers permission granted after the
+            // launch-time poll window expired.
+            ScrollInterceptor.shared.interceptScroll()
             showPreferences()
         } else {
             accessibilityAlert()
@@ -133,7 +149,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
         if !flag {
-            showPreferences()
+            preferencesClicked(self)
         }
         return true
     }
