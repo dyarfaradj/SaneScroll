@@ -26,6 +26,8 @@ class Options {
     var alternateDetectionMethod: Bool = false
     var disableMouseAccel: Bool = false
     var launchAtLogin: Bool = false
+    // Bundle identifiers of apps whose scrolling is left untouched
+    var excludedApps: [String] = []
 
     init() {
         UserDefaults.standard.register(defaults: [
@@ -38,6 +40,7 @@ class Options {
             "DisableMouseAccel": disableMouseAccel,
             "OriginalAccel": Int(origAccel),
             "LaunchAtLogin": launchAtLogin,
+            "ExcludedApps": excludedApps,
         ])
         loadOptions()
     }
@@ -53,6 +56,7 @@ class Options {
         alternateDetectionMethod = UserDefaults.standard.bool(forKey: "AlternateDetectionMethod")
         disableMouseAccel = UserDefaults.standard.bool(forKey: "DisableMouseAccel")
         launchAtLogin = UserDefaults.standard.bool(forKey: "LaunchAtLogin")
+        excludedApps = UserDefaults.standard.stringArray(forKey: "ExcludedApps") ?? []
         // Restore the saved system acceleration so it survives a crash or
         // force quit that happened while acceleration was disabled (-1).
         let savedAccel = UserDefaults.standard.integer(forKey: "OriginalAccel")

@@ -21,11 +21,13 @@ final class ScrollInterceptor {
         var disableScrollAccel = true
         var scrollLines: Int64 = 3
         var alternateDetectionMethod = false
+        var excludedBundleIDs: Set<String> = []
     }
 
     private let lock = NSLock()
     private var snapshot = OptionsSnapshot()
     private var paused = false
+    private var frontmostBundleID: String?
     private var started = false
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
@@ -39,7 +41,8 @@ final class ScrollInterceptor {
             invertHorizontalScroll: options.invertHorizontalScroll,
             disableScrollAccel: options.disableScrollAccel,
             scrollLines: options.scrollLines,
-            alternateDetectionMethod: options.alternateDetectionMethod
+            alternateDetectionMethod: options.alternateDetectionMethod,
+            excludedBundleIDs: Set(options.excludedApps)
         )
         lock.lock()
         snapshot = newSnapshot
@@ -66,6 +69,26 @@ final class ScrollInterceptor {
         lock.unlock()
     }
 
+    // Updated from the main thread as apps activate; read by the callback
+    // to skip apps the user excluded.
+    func setFrontmostApp(bundleID: String?) {
+        lock.lock()
+        frontmostBundleID = bundleID
+        lock.unlock()
+    }
+
+    // True when events should pass through untouched (paused, or the
+    // active app is excluded).
+    fileprivate func shouldPassThrough() -> Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        if paused { return true }
+        if let bundleID = frontmostBundleID, snapshot.excludedBundleIDs.contains(bundleID) {
+            return true
+        }
+        return false
+    }
+
     // The system disables taps that are slow to respond (common after
     // sleep/wake or under heavy load); re-enable ours so scrolling keeps
     // being modified without needing an app restart.
@@ -85,7 +108,7 @@ final class ScrollInterceptor {
             return Unmanaged.passUnretained(event)
         }
 
-        if ScrollInterceptor.shared.isPaused {
+        if ScrollInterceptor.shared.shouldPassThrough() {
             return Unmanaged.passUnretained(event)
         }
 

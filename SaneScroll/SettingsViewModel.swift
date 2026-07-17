@@ -5,6 +5,7 @@
 
 import Cocoa
 import ServiceManagement
+import UniformTypeIdentifiers
 
 enum LoginItem {
     // Pre-rename helper id, cleaned up on every change so stale
@@ -49,6 +50,7 @@ class SettingsViewModel: ObservableObject {
     @Published var launchAtLogin: Bool
     @Published var showMenuBarIcon: Bool
     @Published var alternateDetectionMethod: Bool
+    @Published var excludedApps: [String]
 
     private var optionsObserver: NSObjectProtocol?
 
@@ -62,6 +64,7 @@ class SettingsViewModel: ObservableObject {
         launchAtLogin = LoginItem.isEnabled
         showMenuBarIcon = opts.showMenuBarIcon
         alternateDetectionMethod = opts.alternateDetectionMethod
+        excludedApps = opts.excludedApps
 
         // Keep an open preferences window in sync with the menu bar quick
         // toggles, so pressing OK doesn't write stale values back.
@@ -83,6 +86,33 @@ class SettingsViewModel: ObservableObject {
         }
     }
 
+    // MARK: - Excluded apps
+
+    func addExcludedApps() {
+        let panel = NSOpenPanel()
+        panel.directoryURL = URL(fileURLWithPath: "/Applications")
+        panel.allowedContentTypes = [.applicationBundle]
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        guard panel.runModal() == .OK else { return }
+        for url in panel.urls {
+            if let bundleID = Bundle(url: url)?.bundleIdentifier, !excludedApps.contains(bundleID) {
+                excludedApps.append(bundleID)
+            }
+        }
+    }
+
+    func removeExcludedApp(_ bundleID: String) {
+        excludedApps.removeAll { $0 == bundleID }
+    }
+
+    func displayName(for bundleID: String) -> String {
+        if let url = NSWorkspace.shared.urlForApplication(withBundleIdentifier: bundleID) {
+            return FileManager.default.displayName(atPath: url.path)
+        }
+        return bundleID
+    }
+
     func apply() {
         let defaults = UserDefaults.standard
         defaults.set(invertVerticalScroll, forKey: "InvertVerticalScroll")
@@ -93,6 +123,7 @@ class SettingsViewModel: ObservableObject {
         defaults.set(launchAtLogin, forKey: "LaunchAtLogin")
         defaults.set(showMenuBarIcon, forKey: "ShowMenuBarIcon")
         defaults.set(alternateDetectionMethod, forKey: "AlternateDetectionMethod")
+        defaults.set(excludedApps, forKey: "ExcludedApps")
 
         Options.shared.loadOptions()
         MenuBarItem.shared.refreshVisibility()

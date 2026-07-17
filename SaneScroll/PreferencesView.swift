@@ -46,6 +46,34 @@ struct PreferencesView: View {
                 }
 
                 Section {
+                    if viewModel.excludedApps.isEmpty {
+                        Text("Scrolling is modified in every application")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    } else {
+                        ForEach(viewModel.excludedApps, id: \.self) { bundleID in
+                            HStack {
+                                Text(viewModel.displayName(for: bundleID))
+                                Spacer()
+                                Button {
+                                    viewModel.removeExcludedApp(bundleID)
+                                } label: {
+                                    Image(systemName: "minus.circle.fill")
+                                        .foregroundColor(.secondary)
+                                }
+                                .buttonStyle(.plain)
+                                .help("Remove from excluded apps")
+                            }
+                        }
+                    }
+                    Button("Add Application…") {
+                        viewModel.addExcludedApps()
+                    }
+                } header: {
+                    Text("Excluded Applications")
+                }
+
+                Section {
                     Toggle("Launch at login", isOn: $viewModel.launchAtLogin)
 
                     VStack(alignment: .leading, spacing: 2) {
