@@ -8,6 +8,7 @@
 
 import Cocoa
 import Foundation
+import IOKit.hid
 import SwiftUI
 
 @main
@@ -15,9 +16,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     var prefsWindow: NSWindow?
     var aboutWindow: NSWindow?
+    private var hidDeviceMonitor: IOHIDManager?
 
     func applicationDidFinishLaunching(_ aNotification: Notification){
         refresh()
+        observeAccelerationResets()
         let trusted = AXIsProcessTrusted()
         if trusted {
             ScrollInterceptor.shared.interceptScroll()
@@ -135,6 +138,39 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return true
     }
     
+    // macOS resets the HID acceleration property on wake and when a mouse
+    // reconnects, so reapply our setting whenever either happens.
+    private func observeAccelerationResets() {
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self,
+            selector: #selector(reapplyMouseAccel),
+            name: NSWorkspace.didWakeNotification,
+            object: nil
+        )
+
+        let manager = IOHIDManagerCreate(kCFAllocatorDefault, IOOptionBits(kIOHIDOptionsTypeNone))
+        let matching: [String: Int] = [
+            kIOHIDDeviceUsagePageKey: kHIDPage_GenericDesktop,
+            kIOHIDDeviceUsageKey: kHIDUsage_GD_Mouse,
+        ]
+        IOHIDManagerSetDeviceMatching(manager, matching as CFDictionary)
+        IOHIDManagerRegisterDeviceMatchingCallback(manager, { _, _, _, _ in
+            if let appDelegate = NSApp.delegate as? AppDelegate {
+                appDelegate.reapplyMouseAccel()
+            }
+        }, nil)
+        IOHIDManagerScheduleWithRunLoop(manager, CFRunLoopGetMain(), CFRunLoopMode.defaultMode.rawValue)
+        IOHIDManagerOpen(manager, IOOptionBits(kIOHIDOptionsTypeNone))
+        hidDeviceMonitor = manager
+    }
+
+    @objc func reapplyMouseAccel() {
+        // Give the system a moment to finish its own device setup first
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.disableMouseAccel()
+        }
+    }
+
     func disableMouseAccel() {
         // Based on https://github.com/apsun/NoMouseAccel
         let client = IOHIDEventSystemClientCreateSimpleClient(kCFAllocatorDefault)
