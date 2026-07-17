@@ -157,6 +157,7 @@ class MenuBarItem: NSObject {
         UserDefaults.standard.set(opts.disableMouseAccel, forKey: "DisableMouseAccel")
         ScrollInterceptor.shared.refreshOptions()
         statusItem?.menu = buildMenu()
+        NotificationCenter.default.post(name: .saneScrollOptionsChanged, object: nil)
     }
 
     // MARK: - Toggle Actions

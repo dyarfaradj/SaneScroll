@@ -16,6 +16,8 @@ class SettingsViewModel: ObservableObject {
     @Published var showMenuBarIcon: Bool
     @Published var alternateDetectionMethod: Bool
 
+    private var optionsObserver: NSObjectProtocol?
+
     init() {
         let opts = Options.shared
         invertVerticalScroll = opts.invertVerticalScroll
@@ -26,6 +28,25 @@ class SettingsViewModel: ObservableObject {
         launchAtLogin = opts.launchAtLogin
         showMenuBarIcon = opts.showMenuBarIcon
         alternateDetectionMethod = opts.alternateDetectionMethod
+
+        // Keep an open preferences window in sync with the menu bar quick
+        // toggles, so pressing OK doesn't write stale values back.
+        optionsObserver = NotificationCenter.default.addObserver(
+            forName: .saneScrollOptionsChanged, object: nil, queue: .main
+        ) { [weak self] _ in
+            guard let self = self else { return }
+            let opts = Options.shared
+            self.invertVerticalScroll = opts.invertVerticalScroll
+            self.invertHorizontalScroll = opts.invertHorizontalScroll
+            self.disableScrollAccel = opts.disableScrollAccel
+            self.disableMouseAccel = opts.disableMouseAccel
+        }
+    }
+
+    deinit {
+        if let observer = optionsObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
 
     func apply() {
