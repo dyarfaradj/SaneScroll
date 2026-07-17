@@ -30,6 +30,9 @@ SaneScroll intercepts scroll events and lets you configure scroll behavior per d
 - 🚫 Disable scroll acceleration for mice
 - 📏 Adjust scroll distance (line-by-line or custom multiplier)
 - 🎯 Per-device configuration
+- 🙈 Exclude specific apps from scroll modifications
+- ⏸️ Pause from the menu bar without quitting
+- 🔔 Built-in update check against GitHub releases
 - 🚀 Launch at login
 - 📌 Lives in your menu bar, out of the way
 

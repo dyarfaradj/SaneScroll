@@ -19,7 +19,20 @@
 "InvertHorizontalScroll" = "Invert Horizontal Scroll";
 "DisableScrollAcceleration" = "Disable Scroll Acceleration";
 "DisableMouseAcceleration" = "Disable Mouse Acceleration";
+"PauseSaneScroll" = "Pause SaneScroll";
+"StatusPaused" = "Paused";
 "Preferences" = "Preferences…";
 "AboutSaneScroll" = "About SaneScroll";
 "Sponsor" = "Sponsor";
 "QuitSaneScroll" = "Quit SaneScroll";
+
+/* Update checker */
+"CheckForUpdates" = "Check for Updates…";
+"UpdateAvailableTitle" = "Update Available";
+"UpdateAvailableMessage" = "SaneScroll %@ is available — you have %@. Would you like to download it?";
+"UpdateDownload" = "Download";
+"UpdateLater" = "Later";
+"UpToDateTitle" = "You're Up to Date";
+"UpToDateMessage" = "SaneScroll %@ is the latest version.";
+"UpdateCheckFailedTitle" = "Update Check Failed";
+"UpdateCheckFailedMessage" = "Couldn't reach GitHub to check for a new version. Please try again later.";

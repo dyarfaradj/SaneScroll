@@ -21,6 +21,7 @@
 		BB00000000000001 /* PreferencesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000002 /* PreferencesView.swift */; };
 		BB00000000000003 /* AboutView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000004 /* AboutView.swift */; };
 		BB00000000000005 /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000006 /* SettingsViewModel.swift */; };
+		BB00000000000007 /* UpdateChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB00000000000008 /* UpdateChecker.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -58,6 +59,7 @@
 		BB00000000000002 /* PreferencesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreferencesView.swift; sourceTree = "<group>"; };
 		BB00000000000004 /* AboutView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutView.swift; sourceTree = "<group>"; };
 		BB00000000000006 /* SettingsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewModel.swift; sourceTree = "<group>"; };
+		BB00000000000008 /* UpdateChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UpdateChecker.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,6 +128,7 @@
 				BB00000000000002 /* PreferencesView.swift */,
 				BB00000000000004 /* AboutView.swift */,
 				BB00000000000006 /* SettingsViewModel.swift */,
+				BB00000000000008 /* UpdateChecker.swift */,
 				91C7ECE524CC8789007E2D4C /* ScrollInterceptor.swift */,
 				9138880425B0CB2700A3A633 /* SaneScroll-Bridging-Header.h */,
 				914D7D7A25C3108C00503565 /* Main.storyboard */,
@@ -254,6 +257,7 @@
 				BB00000000000001 /* PreferencesView.swift in Sources */,
 				BB00000000000003 /* AboutView.swift in Sources */,
 				BB00000000000005 /* SettingsViewModel.swift in Sources */,
+				BB00000000000007 /* UpdateChecker.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

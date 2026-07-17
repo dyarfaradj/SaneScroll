@@ -21,6 +21,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     func applicationDidFinishLaunching(_ aNotification: Notification){
         refresh()
         observeAccelerationResets()
+        observeFrontmostApp()
+        UpdateChecker.shared.checkAutomatically()
         let trusted = AXIsProcessTrusted()
         if trusted {
             ScrollInterceptor.shared.interceptScroll()
@@ -154,6 +156,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return true
     }
     
+    // Track the active app so the event tap can skip excluded apps.
+    private func observeFrontmostApp() {
+        ScrollInterceptor.shared.setFrontmostApp(
+            bundleID: NSWorkspace.shared.frontmostApplication?.bundleIdentifier)
+        NSWorkspace.shared.notificationCenter.addObserver(
+            self,
+            selector: #selector(frontmostAppChanged(_:)),
+            name: NSWorkspace.didActivateApplicationNotification,
+            object: nil
+        )
+    }
+
+    @objc private func frontmostAppChanged(_ notification: Notification) {
+        let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication
+        ScrollInterceptor.shared.setFrontmostApp(bundleID: app?.bundleIdentifier)
+    }
+
     // macOS resets the HID acceleration property on wake and when a mouse
     // reconnects, so reapply our setting whenever either happens.
     private func observeAccelerationResets() {

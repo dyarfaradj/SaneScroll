@@ -96,6 +96,15 @@ class MenuBarItem: NSObject {
 
         menu.addItem(NSMenuItem.separator())
 
+        menu.addItem(toggleItem(
+            title: NSLocalizedString("PauseSaneScroll", comment: ""),
+            isOn: ScrollInterceptor.shared.isPaused,
+            icon: "pause.circle",
+            action: #selector(togglePause)
+        ))
+
+        menu.addItem(NSMenuItem.separator())
+
         // ── Actions ────────────────────────────────────────────
         let prefsItem = NSMenuItem(title: NSLocalizedString("Preferences", comment: ""), action: #selector(openPreferences), keyEquivalent: ",")
         prefsItem.keyEquivalentModifierMask = .command
@@ -104,6 +113,13 @@ class MenuBarItem: NSObject {
             prefsItem.image = NSImage(systemSymbolName: "gearshape", accessibilityDescription: nil)
         }
         menu.addItem(prefsItem)
+
+        let updateItem = NSMenuItem(title: NSLocalizedString("CheckForUpdates", comment: ""), action: #selector(checkForUpdates), keyEquivalent: "")
+        updateItem.target = self
+        if #available(macOS 11.0, *) {
+            updateItem.image = NSImage(systemSymbolName: "arrow.down.circle", accessibilityDescription: nil)
+        }
+        menu.addItem(updateItem)
 
         let aboutItem = NSMenuItem(title: NSLocalizedString("AboutSaneScroll", comment: ""), action: #selector(openAbout), keyEquivalent: "")
         aboutItem.target = self
@@ -134,6 +150,9 @@ class MenuBarItem: NSObject {
     // MARK: - Helpers
 
     private func statusSummary() -> String {
+        if ScrollInterceptor.shared.isPaused {
+            return NSLocalizedString("StatusPaused", comment: "")
+        }
         let inverted = NSLocalizedString("StatusInverted", comment: "")
         let normal = NSLocalizedString("StatusNormal", comment: "")
         let v = Options.shared.invertVerticalScroll ? inverted : normal
@@ -179,6 +198,11 @@ class MenuBarItem: NSObject {
         persist()
     }
 
+    @objc private func togglePause() {
+        ScrollInterceptor.shared.setPaused(!ScrollInterceptor.shared.isPaused)
+        statusItem?.menu = buildMenu()
+    }
+
     @objc private func toggleMouseAccel() {
         Options.shared.disableMouseAccel.toggle()
         persist()
@@ -193,6 +217,10 @@ class MenuBarItem: NSObject {
         if let appDelegate = NSApp.delegate as? AppDelegate {
             appDelegate.preferencesClicked(self)
         }
+    }
+
+    @objc private func checkForUpdates() {
+        UpdateChecker.shared.check(userInitiated: true)
     }
 
     @objc private func openAbout() {
