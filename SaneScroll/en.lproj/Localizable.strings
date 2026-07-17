@@ -19,6 +19,8 @@
 "InvertHorizontalScroll" = "Invert Horizontal Scroll";
 "DisableScrollAcceleration" = "Disable Scroll Acceleration";
 "DisableMouseAcceleration" = "Disable Mouse Acceleration";
+"PauseSaneScroll" = "Pause SaneScroll";
+"StatusPaused" = "Paused";
 "Preferences" = "Preferences…";
 "AboutSaneScroll" = "About SaneScroll";
 "Sponsor" = "Sponsor";

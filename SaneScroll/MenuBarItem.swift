@@ -96,6 +96,15 @@ class MenuBarItem: NSObject {
 
         menu.addItem(NSMenuItem.separator())
 
+        menu.addItem(toggleItem(
+            title: NSLocalizedString("PauseSaneScroll", comment: ""),
+            isOn: ScrollInterceptor.shared.isPaused,
+            icon: "pause.circle",
+            action: #selector(togglePause)
+        ))
+
+        menu.addItem(NSMenuItem.separator())
+
         // ── Actions ────────────────────────────────────────────
         let prefsItem = NSMenuItem(title: NSLocalizedString("Preferences", comment: ""), action: #selector(openPreferences), keyEquivalent: ",")
         prefsItem.keyEquivalentModifierMask = .command
@@ -134,6 +143,9 @@ class MenuBarItem: NSObject {
     // MARK: - Helpers
 
     private func statusSummary() -> String {
+        if ScrollInterceptor.shared.isPaused {
+            return NSLocalizedString("StatusPaused", comment: "")
+        }
         let inverted = NSLocalizedString("StatusInverted", comment: "")
         let normal = NSLocalizedString("StatusNormal", comment: "")
         let v = Options.shared.invertVerticalScroll ? inverted : normal
@@ -177,6 +189,11 @@ class MenuBarItem: NSObject {
     @objc private func toggleScrollAccel() {
         Options.shared.disableScrollAccel.toggle()
         persist()
+    }
+
+    @objc private func togglePause() {
+        ScrollInterceptor.shared.setPaused(!ScrollInterceptor.shared.isPaused)
+        statusItem?.menu = buildMenu()
     }
 
     @objc private func toggleMouseAccel() {

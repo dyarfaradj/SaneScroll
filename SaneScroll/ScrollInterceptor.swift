@@ -25,6 +25,7 @@ final class ScrollInterceptor {
 
     private let lock = NSLock()
     private var snapshot = OptionsSnapshot()
+    private var paused = false
     private var started = false
     private var eventTap: CFMachPort?
     private var runLoopSource: CFRunLoopSource?
@@ -51,6 +52,20 @@ final class ScrollInterceptor {
         return snapshot
     }
 
+    // Temporarily pass events through unmodified without tearing down the
+    // tap. Session-only; not persisted.
+    var isPaused: Bool {
+        lock.lock()
+        defer { lock.unlock() }
+        return paused
+    }
+
+    func setPaused(_ newValue: Bool) {
+        lock.lock()
+        paused = newValue
+        lock.unlock()
+    }
+
     // The system disables taps that are slow to respond (common after
     // sleep/wake or under heavy load); re-enable ours so scrolling keeps
     // being modified without needing an app restart.
@@ -67,6 +82,10 @@ final class ScrollInterceptor {
     private static let scrollEventCallback: CGEventTapCallBack = { (_, type, event, _) in
         if type == .tapDisabledByTimeout || type == .tapDisabledByUserInput {
             ScrollInterceptor.shared.reenableTap()
+            return Unmanaged.passUnretained(event)
+        }
+
+        if ScrollInterceptor.shared.isPaused {
             return Unmanaged.passUnretained(event)
         }
 
