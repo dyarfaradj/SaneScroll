@@ -42,13 +42,17 @@ class AutoLauncherAppDelegate: NSObject, NSApplicationDelegate {
         let isRunning = runningApps.contains {
             $0.bundleIdentifier == Constants.mainAppBundleID
         }
-        
-        if !isRunning {
-            guard let mainAppURL = locateMainApp() else { return }
 
-            NSWorkspace.shared.openApplication(at: mainAppURL,
-                                               configuration: NSWorkspace.OpenConfiguration(),
-                                               completionHandler: nil)
+        guard !isRunning, let mainAppURL = locateMainApp() else {
+            NSApp.terminate(nil)
+            return
+        }
+
+        NSWorkspace.shared.openApplication(at: mainAppURL,
+                                           configuration: NSWorkspace.OpenConfiguration()) { _, _ in
+            DispatchQueue.main.async {
+                NSApp.terminate(nil)
+            }
         }
     }
     
