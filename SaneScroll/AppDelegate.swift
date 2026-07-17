@@ -22,6 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         refresh()
         observeAccelerationResets()
         observeFrontmostApp()
+        UpdateChecker.shared.checkAutomatically()
         let trusted = AXIsProcessTrusted()
         if trusted {
             ScrollInterceptor.shared.interceptScroll()

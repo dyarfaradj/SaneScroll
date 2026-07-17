@@ -51,6 +51,7 @@ class SettingsViewModel: ObservableObject {
     @Published var showMenuBarIcon: Bool
     @Published var alternateDetectionMethod: Bool
     @Published var excludedApps: [String]
+    @Published var checkForUpdates: Bool
 
     private var optionsObserver: NSObjectProtocol?
 
@@ -65,6 +66,7 @@ class SettingsViewModel: ObservableObject {
         showMenuBarIcon = opts.showMenuBarIcon
         alternateDetectionMethod = opts.alternateDetectionMethod
         excludedApps = opts.excludedApps
+        checkForUpdates = opts.checkForUpdates
 
         // Keep an open preferences window in sync with the menu bar quick
         // toggles, so pressing OK doesn't write stale values back.
@@ -124,6 +126,7 @@ class SettingsViewModel: ObservableObject {
         defaults.set(showMenuBarIcon, forKey: "ShowMenuBarIcon")
         defaults.set(alternateDetectionMethod, forKey: "AlternateDetectionMethod")
         defaults.set(excludedApps, forKey: "ExcludedApps")
+        defaults.set(checkForUpdates, forKey: "CheckForUpdates")
 
         Options.shared.loadOptions()
         MenuBarItem.shared.refreshVisibility()

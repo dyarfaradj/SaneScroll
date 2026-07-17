@@ -75,6 +75,7 @@ struct PreferencesView: View {
 
                 Section {
                     Toggle("Launch at login", isOn: $viewModel.launchAtLogin)
+                    Toggle("Check for updates automatically", isOn: $viewModel.checkForUpdates)
 
                     VStack(alignment: .leading, spacing: 2) {
                         Toggle("Show menu bar icon", isOn: $viewModel.showMenuBarIcon)

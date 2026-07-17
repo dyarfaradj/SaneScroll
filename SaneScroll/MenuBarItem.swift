@@ -114,6 +114,13 @@ class MenuBarItem: NSObject {
         }
         menu.addItem(prefsItem)
 
+        let updateItem = NSMenuItem(title: NSLocalizedString("CheckForUpdates", comment: ""), action: #selector(checkForUpdates), keyEquivalent: "")
+        updateItem.target = self
+        if #available(macOS 11.0, *) {
+            updateItem.image = NSImage(systemSymbolName: "arrow.down.circle", accessibilityDescription: nil)
+        }
+        menu.addItem(updateItem)
+
         let aboutItem = NSMenuItem(title: NSLocalizedString("AboutSaneScroll", comment: ""), action: #selector(openAbout), keyEquivalent: "")
         aboutItem.target = self
         if #available(macOS 11.0, *) {
@@ -210,6 +217,10 @@ class MenuBarItem: NSObject {
         if let appDelegate = NSApp.delegate as? AppDelegate {
             appDelegate.preferencesClicked(self)
         }
+    }
+
+    @objc private func checkForUpdates() {
+        UpdateChecker.shared.check(userInitiated: true)
     }
 
     @objc private func openAbout() {
